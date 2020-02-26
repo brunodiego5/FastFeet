@@ -10,6 +10,10 @@ import SessionController from './app/controllers/SessionController';
 import FileController from './app/controllers/FileController';
 import RecipientController from './app/controllers/RecipientController';
 import OrderController from './app/controllers/OrderController';
+import DeliveryController from './app/controllers/DeliveryController';
+import DeliveredController from './app/controllers/DeliveredController';
+import OrderProblemController from './app/controllers/OrderProblemController';
+import DeliveryProblemController from './app/controllers/DeliveryProblemController';
 
 import NotificationController from './app/controllers/NotificationController';
 
@@ -46,11 +50,28 @@ routes.delete(
   RecipientController.delete
 );
 
-routes.get('/deliveries/:deliveryId', checkIsAdmin, OrderController.show);
+routes.get('/deliveries/:orderId', checkIsAdmin, OrderController.show);
 routes.get('/deliveries', checkIsAdmin, OrderController.index);
 routes.post('/deliveries', checkIsAdmin, OrderController.store);
-routes.put('/deliveries/:deliveryId', checkIsAdmin, OrderController.update);
-routes.delete('/deliveries/:deliveryId', checkIsAdmin, OrderController.delete);
+routes.put('/deliveries/:orderId', checkIsAdmin, OrderController.update);
+routes.delete('/deliveries/:orderId', checkIsAdmin, OrderController.delete);
+
+routes.get('/deliveryman/:deliveryId/deliveries', DeliveryController.index);
+routes.put('/deliveryman/:deliveryId/deliveries', DeliveryController.update);
+
+routes.get('/deliveryman/:deliveryId/delivered', DeliveredController.index);
+routes.put('/deliveryman/:deliveryId/delivered', DeliveredController.update);
+
+routes.get('/delivery-problems', checkIsAdmin, OrderProblemController.index);
+
+routes.get('/delivery/:deliveryId/problems', DeliveryProblemController.index);
+routes.put('/delivery/:deliveryId/problems', DeliveryProblemController.update);
+
+routes.delete(
+  '/problem/:deliveryId/cancel-delivery',
+  checkIsAdmin,
+  OrderProblemController.destroy
+);
 
 routes.get('/notifications', NotificationController.index);
 routes.put('/notifications/:id', NotificationController.update);

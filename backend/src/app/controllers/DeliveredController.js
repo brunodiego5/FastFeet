@@ -1,5 +1,3 @@
-import * as Yup from 'yup';
-
 import Delivery from '../models/Delivery';
 
 class DeliveredController {
@@ -16,26 +14,37 @@ class DeliveredController {
   }
 
   async update(req, res) {
-    const schema = Yup.object().shape({
-      end_date: Yup.date().required(),
-    });
-
-    if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Validation fails' });
-    }
     const { deliveryId } = req.params;
 
     const delivery = await Delivery.findByPk(deliveryId);
 
+    /*
+     * Check delivery exists
+     */
     if (!delivery) {
-      return res.status(404).json({ error: 'This order does not exists' });
+      return res.status(404).json({ error: 'This delivery does not exists' });
     }
 
-    const { id, recipient_id, user_id, product, end_date } = delivery.update(
-      req.body
-    );
+    const {
+      id,
+      recipient_id,
+      user_id,
+      product,
+      end_date,
+      signature,
+    } = delivery.update({
+      ...req.body,
+      end_date: new Date(),
+    });
 
-    return res.json({ id, recipient_id, user_id, product, end_date });
+    return res.json({
+      id,
+      recipient_id,
+      user_id,
+      product,
+      end_date,
+      signature,
+    });
   }
 }
 

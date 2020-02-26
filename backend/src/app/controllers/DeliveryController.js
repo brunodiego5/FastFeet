@@ -1,4 +1,4 @@
-import { isWithinRange } from 'date-fns';
+import { getHours } from 'date-fns';
 
 import Delivery from '../models/Delivery';
 
@@ -12,18 +12,18 @@ class DeliveryController {
   async update(req, res) {
     const now = new Date();
 
-    if (
-      isWithinRange(
-        new Date(2014, 0, 3),
-        new Date(2014, 0, 1),
-        new Date(2014, 0, 7)
-      )
-    ) {
+    /*
+     * Check now is between 8 and 18
+     */
+    if (!(getHours(now) >= 8 && getHours(now) <= 18)) {
       return res
         .status(400)
-        .json({ error: 'Only withdrawal per day is allowed' });
+        .json({ error: 'withdrawals are only allowed between 8 am and 6 pm' });
     }
 
+    /*
+     * check quantity of withdrawals 5 per day
+     */
     const amount = await Delivery.findAndCountAll({
       where: { user_id: req.userId, start_date: now },
     });
@@ -31,22 +31,25 @@ class DeliveryController {
     if (amount > 5) {
       return res
         .status(400)
-        .json({ error: 'Only withdrawal per day is allowed' });
+        .json({ error: 'Only 5 withdrawals per day are allowed' });
     }
 
     const { deliveryId } = req.params;
 
     const delivery = await Delivery.findByPk(deliveryId);
 
+    /*
+     * Check delivery exists
+     */
     if (!delivery) {
       return res.status(404).json({ error: 'This order does not exists' });
     }
 
-    const { id, recipient_id, user_id, product, start_date } = delivery.update({
-      start_date: new Date(),
-    });
+    delivery.start_date = now;
 
-    return res.json({ id, recipient_id, user_id, product, start_date });
+    delivery.save();
+
+    return res.json(delivery);
   }
 }
 

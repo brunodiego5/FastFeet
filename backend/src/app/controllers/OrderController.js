@@ -3,7 +3,7 @@ import Delivery from '../models/Delivery';
 import Queue from '../../lib/Queue';
 import Notification from '../schemas/Notification';
 
-import CancellationDelivery from '../jobs/CancellationDelivery';
+import NewDelivery from '../jobs/NewDelivery';
 
 class OrderController {
   async show(req, res) {
@@ -44,7 +44,7 @@ class OrderController {
       product,
     } = await Delivery.create(req.body);
 
-    await Queue.add(CancellationDelivery.key, {
+    await Queue.add(NewDelivery.key, {
       id,
       recipient_id,
       user_id,

@@ -22,3 +22,6 @@ yarn sequelize db:migrate
 
 yarn sequelize migration:create --name=create-deliveries
 yarn sequelize db:migrate
+
+yarn sequelize migration:create --name=create-delivery_problems
+yarn sequelize db:migrate
