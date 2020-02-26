@@ -1,0 +1,24 @@
+yarn init -y
+yarn add express
+yarn add sucrase nodemon -D
+yarn add eslint -D
+yarn eslint --init
+yarn
+yarn add prettier eslint-config-prettier eslint-plugin-prettier -D
+yarn add dotenv
+yarn add sequelize
+yarn add sequelize-cli -D
+yarn add pg pg-hstore
+yarn add bcryptjs
+
+yarn sequelize migration:create --name=create-users
+yarn sequelize db:migrate
+
+yarn sequelize seed:generate --name admin-user
+yarn sequelize db:seed:all
+
+yarn sequelize migration:create --name=create-recipients
+yarn sequelize db:migrate
+
+yarn sequelize migration:create --name=create-deliveries
+yarn sequelize db:migrate
